@@ -50,6 +50,8 @@ import org.eclipse.collections.impl.list.mutable.FastList;
 import org.eclipse.collections.impl.list.mutable.MutableListIterator;
 import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 
+import org.eclipse.collections.impl.list.util.*;
+
 /**
  * An Interval is a range of integers that may be iterated over using a step value. Interval
  * is an OO implementation of a for-loop.
@@ -208,29 +210,8 @@ public final class Interval
      */
     public static Interval evensFromTo(int from, int to)
     {
-        if (from % 2 != 0)
-        {
-            if (from < to)
-            {
-                from++;
-            }
-            else
-            {
-                from--;
-            }
-        }
-        if (to % 2 != 0)
-        {
-            if (to > from)
-            {
-                to--;
-            }
-            else
-            {
-                to++;
-            }
-        }
-        return Interval.fromToBy(from, to, to > from ? 2 : -2);
+        int[] values = NumberUtil.setEven(from, to);
+        return Interval.fromToBy(values[0], values[1], values[1] > values[0] ? 2 : -2);
     }
 
     /**
@@ -238,29 +219,8 @@ public final class Interval
      */
     public static Interval oddsFromTo(int from, int to)
     {
-        if (from % 2 == 0)
-        {
-            if (from < to)
-            {
-                from++;
-            }
-            else
-            {
-                from--;
-            }
-        }
-        if (to % 2 == 0)
-        {
-            if (to > from)
-            {
-                to--;
-            }
-            else
-            {
-                to++;
-            }
-        }
-        return Interval.fromToBy(from, to, to > from ? 2 : -2);
+        int[] values = NumberUtil.setOdd(from, to);
+        return Interval.fromToBy(values[0], values[1], values[1] > values[0] ? 2 : -2);
     }
 
     /**
@@ -463,7 +423,7 @@ public final class Interval
      * This method executes a void procedure against an executor, passing the current index of the
      * interval.
      */
-    public void forEach(Procedure<? super Integer> procedure, Executor executor)
+    public void forEach(Procedure<? super Integer> procedure, Executor executor) 
     {
         CountDownLatch latch = new CountDownLatch(this.size());
         if (this.goForward())
@@ -488,7 +448,7 @@ public final class Interval
         }
         catch (InterruptedException e)
         {
-            // do nothing here;
+        
         }
     }
 
@@ -692,12 +652,10 @@ public final class Interval
         }
         List<?> list = (List<?>) otherList;
 
-        if (otherList instanceof RandomAccess)
+        if ( (otherList instanceof RandomAccess) && (this.size() != list.size()) )
         {
-            if (this.size() != list.size())
-            {
-                return false;
-            }
+            return false;
+            
         }
         ListIterator<?> listIterator = ((List<?>) otherList).listIterator();
         if (this.goForward())
@@ -808,9 +766,9 @@ public final class Interval
         {
             if (Interval.this.from <= Interval.this.to)
             {
-                return this.current <= (long) Interval.this.to;
+                return this.current <= Interval.this.to;
             }
-            return this.current >= (long) Interval.this.to;
+            return this.current >= Interval.this.to;
         }
 
         @Override

@@ -160,7 +160,7 @@ public abstract class AbstractMutableMultimap<K, V, C extends MutableCollection<
     @Override
     public boolean put(K key, V value)
     {
-        C collection = this.getIfAbsentPutCollection(key);
+        C collection = this.getIfAbsentPutCollectionBis(key);
 
         if (collection.add(value))
         {
@@ -199,7 +199,7 @@ public abstract class AbstractMutableMultimap<K, V, C extends MutableCollection<
 
     private boolean putAllNotEmpty(K key, Iterable<? extends V> values)
     {
-        C collection = this.getIfAbsentPutCollection(key);
+        C collection = this.getIfAbsentPutCollectionBis(key);
         int oldSize = collection.size();
         int newSize = Iterate.addAllTo(values, collection).size();
         this.addToTotalSize(newSize - oldSize);
@@ -313,7 +313,7 @@ public abstract class AbstractMutableMultimap<K, V, C extends MutableCollection<
             return this.get(key);
         }
 
-        C existingValues = this.getIfAbsentPutCollection(key);
+        C existingValues = this.getIfAbsentPutCollectionBis(key);
         if (existingValues.isEmpty())
         {
             int newSize = Iterate.addAllTo(values, existingValues).size();
@@ -322,8 +322,8 @@ public abstract class AbstractMutableMultimap<K, V, C extends MutableCollection<
 
         return (C) existingValues.asUnmodifiable();
     }
-
-    private C getIfAbsentPutCollection(K key)
+    
+    private C getIfAbsentPutCollectionBis(K key)
     {
         return this.map.getIfAbsentPutWith(key, this.createCollectionBlock(), this);
     }

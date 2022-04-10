@@ -829,7 +829,7 @@ public class ConcurrentHashMapUnsafe<K, V>
         Object o = ConcurrentHashMapUnsafe.arrayAt(currentArray, index);
         if (o == RESIZED || o == RESIZING)
         {
-            return this.slowGet(key, hash, index, currentArray);
+            return this.slowGet(key, hash, currentArray);
         }
         for (Entry<K, V> e = (Entry<K, V>) o; e != null; e = e.getNext())
         {
@@ -842,12 +842,12 @@ public class ConcurrentHashMapUnsafe<K, V>
         return null;
     }
 
-    private V slowGet(Object key, int hash, int index, Object[] currentArray)
+    private V slowGet(Object key, int hash, Object[] currentArray)
     {
         while (true)
         {
             int length = currentArray.length;
-            index = ConcurrentHashMapUnsafe.indexFor(hash, length);
+            int index = ConcurrentHashMapUnsafe.indexFor(hash, length);
             Object o = ConcurrentHashMapUnsafe.arrayAt(currentArray, index);
             if (o == RESIZED || o == RESIZING)
             {

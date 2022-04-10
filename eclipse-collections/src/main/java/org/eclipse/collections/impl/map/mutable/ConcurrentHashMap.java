@@ -713,7 +713,7 @@ public final class ConcurrentHashMap<K, V>
         Object o = currentArray.get(index);
         if (o == RESIZED || o == RESIZING)
         {
-            return this.slowGet(key, hash, index, currentArray);
+            return this.slowGet(key, hash, currentArray);
         }
         for (Entry<K, V> e = (Entry<K, V>) o; e != null; e = e.getNext())
         {
@@ -726,12 +726,12 @@ public final class ConcurrentHashMap<K, V>
         return null;
     }
 
-    private V slowGet(Object key, int hash, int index, AtomicReferenceArray currentArray)
+    private V slowGet(Object key, int hash, AtomicReferenceArray currentArray)
     {
         while (true)
         {
             int length = currentArray.length();
-            index = ConcurrentHashMap.indexFor(hash, length);
+            int index = ConcurrentHashMap.indexFor(hash, length);
             Object o = currentArray.get(index);
             if (o == RESIZED || o == RESIZING)
             {
